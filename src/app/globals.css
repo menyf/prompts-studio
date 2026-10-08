@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+:root {
+  color-scheme: light;
+}
+body {
+  margin: 0;
+  background: #faf9f6;
+  color: #1c1917;
+  font-family: Arial, 'Helvetica Neue', sans-serif;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 4px;
+}
+::selection {
+  background: #e7e5e4;
+}
