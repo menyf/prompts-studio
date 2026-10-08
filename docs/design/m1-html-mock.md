@@ -1,62 +1,55 @@
-# M1 Interactive HTML Mock — v0.2
+# M1 Interactive HTML Mock — v0.3
 
-This is a **trackable, interactive design artifact**, not production product functionality.
+A standalone interactive UX prototype, tracked in GitHub PR #3. This is **not production functionality**.
 
 ## Preview
 
-- File: `public/mockups/m1/index.html`
-- In local Next.js: `/mockups/m1/index.html`
-- On the PR's Vercel Preview deployment: append `/mockups/m1/index.html` to its preview domain.
-- No build tools, AI API keys, authentication, or database are needed for the standalone HTML.
+The mock is at `public/mockups/m1/index.html`. On the PR Vercel Preview domain, append `/mockups/m1/index.html`. Or run the Next.js dev server and visit the same route.
 
-## UX review and changes from v0.1
+## Design decisions and feedback
 
-We evaluated the mock with lightweight usability heuristics: visual hierarchy, recognition over recall, progressive disclosure, minimum user effort, feedback, affordances, responsive behavior and accessibility.
+### v0.3 — Based on user feedback
 
-### Previous issues
-1. Input form and all five generated results appeared simultaneously, creating split attention and a dense first impression.
-2. The experience appeared to support only one workflow even though the product vision is broader.
-3. The output area competed visually with the primary user action.
-4. Editing and copying had low discoverability.
-5. The mock did not demonstrate an extremely quick one-prompt task.
+1. **Workflow navigation moved to a compact left sidebar** instead of space-consuming cards across the top.
+2. **Desktop uses three logical zones:** left workflow navigation; middle user input; right generated prompt output.
+3. **Real-time generation:** as soon as a nonempty goal or prompt is entered, the right preview updates without a Generate button. Changes to inputs or output language recompute deterministic templates.
+4. **Generated prompts are expanded by default** so users can evaluate content without clicking into each item.
+5. Each prompt has inline Edit and Copy controls, and the output panel has Copy all.
+6. On narrow screens, content stacks; on phones workflow navigation becomes a compact horizontal strip.
+7. The UI retains English/Chinese and an independently selected prompt language.
+8. Working workflows: Implement a Feature and Refine My Prompt. Disabled placeholders: Learn a Concept, Professional Reply, Code Review and Explore Ideas.
 
-### v0.2 design changes
-- **Workflow chooser:** Implement a Feature and Refine My Prompt are functional; Learn a Concept, Professional Reply, Code Review and Explore Ideas are visibly disabled placeholders.
-- **Progressive disclosure:** start with one focused input panel; reveal results only after generation.
-- **Reduced mental load:** one required field and one optional field for Implement a Feature; one field for Refine My Prompt.
-- **Visible navigation:** step markers, Back to edit input, per-prompt View / Edit / Copy, Copy All.
-- **Locale controls:** UI language independent from Prompt output language.
-- **Mobile:** responsive cards and action wrapping.
+**Known tradeoff:** Manually edited prompt content is reset when input or output language changes, to keep the live preview consistent. We should validate whether this is acceptable during user review.
 
-## Functional behavior
+### v0.2 — Earlier findings
+
+The original large two-column view displayed all prompts before any input. v0.2 introduced a separate input/result step and a top-of-page workflow gallery. User feedback favored side-by-side live updating and a sidebar instead. v0.3 replaces that interaction.
+
+## Workflow rules
 
 ### Implement a Feature
-- Required: feature goal.
-- Optional: additional context and constraints. This is temporary input, *not* a Project entity.
-- Static deterministic generation of five prompts: Clarify Requirements, Plan Implementation, Implement Feature, Test & Verify, Review Code.
-- Individual and all-in-one copy, editing of generated text.
+
+One required Goal and one optional Context field. Five deterministic prompts are generated: Clarify Requirements, Plan Implementation, Implement Feature, Test & Verify, Review Code. No Project entity.
 
 ### Refine My Prompt
-- Required: user's original prompt or rough notes.
-- No AI rewrite. Output is precisely the original input enclosed in a fenced code block, followed by an empty line and this verbatim instruction:
+
+One input for the original prompt or rough draft. Wrap **the exact original text**, including whitespace, in a Markdown fenced code block. The fence expands beyond any runs of backticks in the input. Append one blank line, then this exact English instruction:
 
 > First, review my full message and any attached files, even if my thoughts are rough, fragmented, or unfiltered. Tell me what you think I'm actually trying to achieve, then propose a plan for me to review. Stop and wait for my approval before starting the task.
 
-- A safe-length backtick fence is chosen so backticks already in the input do not accidentally close the block.
-- **Attached files are not uploaded or read by this mock.** The instruction references files only for the destination AI tool, if supplied there.
-- The fixed appended English instruction is intentionally unchanged even when Chinese output is selected.
+The fixed instruction is deliberately not translated. This mock does not support file uploads; "attached files" refers to files subsequently supplied in the destination AI tool.
 
-## Open questions for user review
-1. Should the workflow chooser be cards or a compact dropdown?
-2. Does two-step progressive disclosure feel better than the original side-by-side layout?
-3. Should results auto-expand the first prompt, or remain collapsed?
-4. Should Refine My Prompt copy only the complete wrapped prompt, or support alternate copy modes?
-5. Are the four coming-soon placeholders the right candidate workflows?
-6. When returning to input, should generated edits be retained if input has not changed?
+## Review checklist
 
-## Scope constraints
-- This is a review-only mock, kept in the design branch / draft PR.
-- No login, project storage, AI API, analytics, external requests, persistence, or production UI implementation.
-- Data entered is kept in memory for this page only; refresh clears it.
-- The static HTML is served publicly at this route *if merged*. Do not input sensitive code/customer data in preview environments without appropriate access restrictions.
-- Prompt templates are **illustrative** and not yet the final approved content for Codex implementation.
+- Try both functional workflows.
+- Type, edit, and delete input; confirm preview appears, updates and clears accordingly.
+- Check every prompt is expanded when generated.
+- Edit and copy an individual prompt; copy all prompts.
+- Switch UI language and output language separately.
+- Test desktop split layout, tablet stacking and narrow mobile sidebar/strip.
+- Test Refine My Prompt with embedded triple-backtick blocks.
+- Assess whether losing manual prompt edits on source changes is acceptable.
+
+## Scope and privacy
+
+No AI requests, account, project storage, analytics, external service, or persistence. The HTML mock runs in memory in the browser. Do not enter sensitive content in a public Preview environment. The file would be publicly available under this route if the PR is merged. Keep PR as Draft pending UX sign-off.
