@@ -1,14 +1,27 @@
-# M1 Interactive HTML Mock — v0.3
+# M1 Interactive HTML Mock — v0.4
 
 A standalone interactive UX prototype, tracked in GitHub PR #3. This is **not production functionality**.
 
 ## Preview
 
-The mock is at `public/mockups/m1/index.html`. On the PR Vercel Preview domain, append `/mockups/m1/index.html`. Or run the Next.js dev server and visit the same route.
+The mock is at `public/mockups/m1/index.html`. On the PR Vercel Preview domain, append `/mockups/m1/index.html`. Preview and interaction validation use Vercel; do not start a local server or run pnpm for this design iteration.
 
 ## Design decisions and feedback
 
-### v0.3 — Based on user feedback
+### v0.4 — Review and adopted interaction decisions
+
+Priorities from the v0.3 review:
+
+1. **Prevent surprising edit loss.** v0.3 discarded edits on source, output-language, and workflow changes. Keep per-workflow manual edits in memory. Unedited prompts remain live. Mark an edited prompt when its generated source differs, explicitly stating that copying includes the retained edit. Each edited prompt offers **Use latest generated**, which replaces that edit with the current template. Switching UI language or workflows preserves drafts. Deleting source temporarily hides the output; re-entering it restores edits with the appropriate warning. Clear deliberately clears the current workflow's inputs and edits. Reloading clears everything.
+2. **Improve reading and navigation.** Remove the duplicated goal/context summary, expand all prompt text without nested preview scrollbars, use 13px readable body text, and add five jump links. On desktop, input stays alongside the output while the page scrolls; a short viewport may scroll the input panel to keep its controls reachable. At 1050px and below, input and output stack. Jump links copy nothing; individual Copy and Copy all copy the exact displayed content, including edits. Copy all adds numbered headings and separators.
+3. **Reduce visual load.** Narrow the sidebar, reduce headline and panel padding, and show quieter but readable disabled items. Mobile uses two compact active workflow buttons plus a small Coming soon group containing all four placeholders.
+4. **Make copy status visible.** Show inline success/failure in a polite live region and temporary button feedback, with no alert dialogs. Failure asks users to select text manually. Copy controls have prompt-specific accessible names.
+5. **Remove misleading configuration.** Refine My Prompt hides the output-language selector and explains that it preserves the original plus the fixed English instruction. The feature workflow's language selection is retained independently from UI language.
+6. **Avoid silent input loss.** Remove arbitrary textarea length limits. Example insertion offers Undo example until further source editing. Refine's adaptive fence handles embedded backticks and preserves whitespace-only input too. Original text remains browser textarea text; browsers normalize CRLF to LF.
+
+**Trade-offs to review on Vercel:** retaining a draft means that prompt may contain old requirements or an old output language until explicitly reset; the per-prompt warning makes this visible. Full expansion makes the page longer, especially with long source text; jump links keep all stages reachable without hiding content. Mobile prioritizes input first, with output below rather than simultaneous columns. Editing the Refine output is an explicit override; Use latest generated restores exact wrapping and the required suffix.
+
+### v0.3 — Historical iteration
 
 1. **Workflow navigation moved to a compact left sidebar** instead of space-consuming cards across the top.
 2. **Desktop uses three logical zones:** left workflow navigation; middle user input; right generated prompt output.
@@ -19,7 +32,7 @@ The mock is at `public/mockups/m1/index.html`. On the PR Vercel Preview domain, 
 7. The UI retains English/Chinese and an independently selected prompt language.
 8. Working workflows: Implement a Feature and Refine My Prompt. Disabled placeholders: Learn a Concept, Professional Reply, Code Review and Explore Ideas.
 
-**Known tradeoff:** Manually edited prompt content is reset when input or output language changes, to keep the live preview consistent. We should validate whether this is acceptable during user review.
+**Superseded in v0.4:** v0.3 reset manually edited prompts on source changes.
 
 ### v0.2 — Earlier findings
 
@@ -48,8 +61,14 @@ The fixed instruction is deliberately not translated. This mock does not support
 - Switch UI language and output language separately.
 - Test desktop split layout, tablet stacking and narrow mobile sidebar/strip.
 - Test Refine My Prompt with embedded triple-backtick blocks.
-- Assess whether losing manual prompt edits on source changes is acceptable.
+- Edit a prompt, change source/output language, switch workflows and return; verify edit retention, stale warning, exact copied draft, and explicit reset.
+- Verify empty/whitespace-only input, long inputs, backticks, special HTML characters, example undo, and copy failure.
+- Check desktop/tablet/mobile layout, jump navigation, keyboard focus and console errors.
 
 ## Scope and privacy
 
 No AI requests, account, project storage, analytics, external service, or persistence. The HTML mock runs in memory in the browser. Do not enter sensitive content in a public Preview environment. The file would be publicly available under this route if the PR is merged. Keep PR as Draft pending UX sign-off.
+
+## Validation for v0.4
+
+Inline JavaScript syntax is checked with Node. Browser interaction checks target the Vercel Preview, using the existing installed Playwright tooling without adding project dependencies. Validation results are recorded after deployment. Local pnpm lint, format:check, typecheck, test, and build are not run at the user's request; GitHub CI and Vercel provide the remote build/check results when available.
