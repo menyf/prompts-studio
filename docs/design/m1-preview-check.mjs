@@ -9,7 +9,6 @@ const { chromium } = await import(
     viewport: { width: 1440, height: 1000 },
     permissions: ['clipboard-read', 'clipboard-write'],
   });
-  const fs = require('node:fs');
   if (process.env.VERCEL_COOKIE_JAR) {
     const cookies = fs
       .readFileSync(process.env.VERCEL_COOKIE_JAR, 'utf8')
