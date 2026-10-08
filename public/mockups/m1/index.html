@@ -1,0 +1,1378 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Prompt Studio — M1 Mock v0.4</title>
+    <style>
+      :root {
+        font:
+          14px/1.5 system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        color: #1a2a41;
+        background: #f7f9fc;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      button,
+      textarea,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:disabled {
+        cursor: not-allowed;
+      }
+      button:focus-visible,
+      textarea:focus-visible,
+      select:focus-visible {
+        outline: 3px solid #9abdf7;
+        outline-offset: 2px;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      header {
+        background: #fff;
+        border-bottom: 1px solid #e3eaf3;
+      }
+      .top {
+        max-width: 1480px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 23px;
+        gap: 15px;
+      }
+      .brand {
+        font-size: 17px;
+        font-weight: 850;
+        letter-spacing: -0.04em;
+      }
+      .top-right {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .status {
+        color: #3763a6;
+        font-size: 11px;
+        background: #eef4ff;
+        border-radius: 100px;
+        padding: 5px 10px;
+        font-weight: 750;
+      }
+      .shell {
+        max-width: 1480px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: 212px minmax(0, 1fr);
+        min-height: calc(100vh - 64px);
+      }
+      .sidebar {
+        border-right: 1px solid #e3eaf3;
+        background: #fff;
+        padding: 24px 12px;
+      }
+      .nav-label {
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        color: #94a0b0;
+        font-weight: 800;
+        padding: 0 11px;
+        margin: 0 0 13px;
+      }
+      .nav {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .nav-item {
+        width: 100%;
+        border: 1px solid transparent;
+        border-radius: 9px;
+        padding: 11px 10px;
+        background: transparent;
+        text-align: left;
+        color: #465b78;
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+      }
+      .nav-item:hover:not(:disabled) {
+        background: #f3f7fd;
+      }
+      .nav-item.selected {
+        background: #ebf3ff;
+        border-color: #d6e7ff;
+        color: #1b5abb;
+      }
+      .nav-item:disabled {
+        opacity: 0.5;
+      }
+      .nav-icon {
+        font-size: 16px;
+        line-height: 20px;
+        width: 20px;
+        text-align: center;
+        flex: none;
+      }
+      .nav-main {
+        min-width: 0;
+        flex: 1;
+      }
+      .nav-title {
+        font-weight: 750;
+        font-size: 12px;
+      }
+      .nav-sub {
+        font-size: 11px;
+        color: #8090a5;
+        margin-top: 2px;
+      }
+      .nav-pill {
+        font-size: 9px;
+        border-radius: 10px;
+        background: #edf0f5;
+        padding: 2px 5px;
+        color: #8794a7;
+        white-space: nowrap;
+      }
+      .nav-divider {
+        border-top: 1px solid #e9eef5;
+        margin: 15px 9px;
+      }
+      .side-note {
+        padding: 12px 10px;
+        color: #91a0b3;
+        font-size: 11px;
+        line-height: 1.6;
+      }
+      .main {
+        min-width: 0;
+        padding: 28px 26px 64px;
+      }
+      .eyebrow {
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        color: #3774bf;
+        font-weight: 850;
+      }
+      .intro h1 {
+        font-size: clamp(24px, 3vw, 32px);
+        line-height: 1.15;
+        letter-spacing: -0.05em;
+        margin: 7px 0 7px;
+      }
+      .intro p {
+        color: #718098;
+        font-size: 13px;
+        line-height: 1.6;
+        margin: 0 0 21px;
+      }
+      .columns {
+        display: grid;
+        grid-template-columns: minmax(300px, 0.79fr) minmax(350px, 1.21fr);
+        gap: 16px;
+        align-items: start;
+      }
+      .panel {
+        min-width: 0;
+        background: white;
+        border: 1px solid #e0e7f1;
+        border-radius: 13px;
+        box-shadow: 0 4px 16px #1d40750a;
+      }
+      .panel-head {
+        padding: 19px 20px 15px;
+        border-bottom: 1px solid #ebeff5;
+      }
+      .panel-head h2 {
+        font-size: 16px;
+        letter-spacing: -0.03em;
+        margin: 0 0 4px;
+      }
+      .panel-head p {
+        font-size: 12px;
+        color: #8794a5;
+        line-height: 1.55;
+        margin: 0;
+      }
+      .content {
+        padding: 19px 20px;
+      }
+      .label {
+        display: block;
+        font-size: 12px;
+        font-weight: 800;
+        margin: 2px 0 8px;
+      }
+      textarea {
+        width: 100%;
+        min-height: 105px;
+        resize: vertical;
+        border: 1px solid #d7e1ee;
+        padding: 12px;
+        border-radius: 9px;
+        line-height: 1.6;
+        color: #253954;
+        background: #fff;
+      }
+      #goal {
+        min-height: 165px;
+      }
+      #draft {
+        min-height: 250px;
+      }
+      textarea::placeholder {
+        color: #9daabc;
+      }
+      .optional {
+        font-weight: 500;
+        color: #98a3b3;
+      }
+      .hint {
+        color: #8b9aaf;
+        font-size: 11px;
+        line-height: 1.55;
+        margin: 8px 0 16px;
+      }
+      .field-block {
+        margin-bottom: 20px;
+      }
+      .secondary {
+        background: white;
+        border: 1px solid #d9e2ed;
+        color: #395171;
+        font-size: 11px;
+        font-weight: 750;
+        border-radius: 8px;
+        padding: 7px 10px;
+      }
+      .secondary:hover {
+        background: #f3f7ff;
+      }
+      .primary {
+        background: #2468df;
+        border: 1px solid #2468df;
+        color: white;
+        font-size: 12px;
+        font-weight: 750;
+        border-radius: 8px;
+        padding: 9px 12px;
+      }
+      .primary:hover {
+        background: #1458cb;
+      }
+      .input-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .privacy {
+        color: #8191a5;
+        font-size: 11px;
+        line-height: 1.6;
+      }
+      .preview-tools {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      .preview-tools label {
+        font-size: 11px;
+        color: #76869c;
+      }
+      .preview-tools select {
+        background: #fff;
+        border: 1px solid #d9e3ed;
+        padding: 7px;
+        border-radius: 8px;
+        font-size: 11px;
+      }
+      .summary {
+        background: #f0f6ff;
+        border: 1px solid #e1ebfb;
+        border-radius: 9px;
+        padding: 12px;
+        font-size: 12px;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        color: #4c6381;
+        margin-bottom: 13px;
+      }
+      .summary strong {
+        color: #263c5c;
+      }
+      .placeholder {
+        border: 1px dashed #d6e0ec;
+        border-radius: 10px;
+        color: #8493a8;
+        font-size: 13px;
+        padding: 45px 20px;
+        text-align: center;
+        line-height: 1.7;
+      }
+      .prompt-card {
+        border: 1px solid #e0e7f0;
+        border-radius: 9px;
+        margin-top: 11px;
+        overflow: hidden;
+      }
+      .prompt-top {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 11px 12px;
+        border-bottom: 1px solid #edf1f6;
+      }
+      .bubble {
+        width: 24px;
+        height: 24px;
+        background: #eaf2ff;
+        color: #276aca;
+        border-radius: 50%;
+        font-weight: 850;
+        display: grid;
+        place-items: center;
+        flex: none;
+        font-size: 11px;
+      }
+      .prompt-name {
+        flex: 1;
+        min-width: 0;
+        font-size: 12px;
+        font-weight: 800;
+      }
+      .card-actions {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .prompt-body {
+        padding: 11px 12px;
+        background: #fcfdff;
+      }
+      .prompt-body pre {
+        font:
+          11px/1.65 ui-monospace,
+          Consolas,
+          monospace;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        color: #435b78;
+        margin: 0;
+        background: #f4f7fb;
+        border-radius: 7px;
+        padding: 12px;
+        max-height: 240px;
+        overflow: auto;
+      }
+      .prompt-body textarea {
+        min-height: 200px;
+        font:
+          11px/1.65 ui-monospace,
+          Consolas,
+          monospace;
+      }
+      .results-foot {
+        color: #8797a9;
+        font-size: 11px;
+        margin-top: 13px;
+        line-height: 1.55;
+      }
+      .error {
+        font-size: 12px;
+        color: #bd3442;
+        margin: 8px 0;
+      }
+      footer {
+        text-align: center;
+        color: #a0aabb;
+        font-size: 11px;
+        margin-top: 21px;
+      }
+      @media (max-width: 1100px) {
+        .columns {
+          grid-template-columns: minmax(270px, 1fr) minmax(300px, 1fr);
+        }
+        .main {
+          padding: 24px 18px;
+        }
+      }
+      @media (max-width: 800px) {
+        .shell {
+          grid-template-columns: 174px minmax(0, 1fr);
+        }
+        .columns {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .sidebar {
+          padding: 17px 8px;
+        }
+        .main {
+          padding: 22px 16px;
+        }
+        .panel-head,
+        .content {
+          padding: 17px;
+        }
+      }
+      @media (max-width: 560px) {
+        .shell {
+          display: block;
+        }
+        .sidebar {
+          border-right: 0;
+          border-bottom: 1px solid #e3eaf3;
+          padding: 12px;
+        }
+        .nav-label,
+        .nav-divider,
+        .side-note,
+        .nav-sub,
+        .nav-pill {
+          display: none;
+        }
+        .nav {
+          flex-direction: row;
+          gap: 6px;
+          overflow-x: auto;
+        }
+        .nav-item {
+          width: auto;
+          flex: 0 0 auto;
+          padding: 8px 9px;
+          align-items: center;
+        }
+        .nav-title {
+          font-size: 11px;
+        }
+        .nav-icon {
+          font-size: 13px;
+          width: auto;
+        }
+        .nav-item:disabled {
+          display: none;
+        }
+        .main {
+          padding: 20px 13px;
+        }
+        .intro h1 {
+          font-size: 25px;
+        }
+        .status {
+          display: none;
+        }
+        .columns {
+          gap: 12px;
+        }
+      }
+      /* v0.4: one page scroll, compact navigation, readable expanded output. */
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 20px;
+      }
+      .shell {
+        grid-template-columns: 190px minmax(0, 1fr);
+      }
+      .sidebar {
+        padding-top: 20px;
+      }
+      .nav-sub {
+        display: block;
+      }
+      .nav-item:disabled {
+        opacity: 1;
+        color: #64748b;
+      }
+      .nav-item:disabled .nav-sub {
+        color: #64748b;
+      }
+      .nav-icon {
+        color: inherit;
+      }
+      .main {
+        padding-top: 20px;
+      }
+      .intro h1 {
+        font-size: 24px;
+      }
+      .eyebrow {
+        display: none;
+      }
+      .intro p {
+        margin-bottom: 16px;
+      }
+      .columns {
+        grid-template-columns: minmax(280px, 0.72fr) minmax(360px, 1.28fr);
+      }
+      .panel {
+        box-shadow: none;
+        border-radius: 10px;
+      }
+      .panel-head {
+        padding: 15px 18px;
+      }
+      .content {
+        padding: 16px 18px;
+      }
+      .columns > .panel:first-child {
+        position: sticky;
+        top: 16px;
+        max-height: calc(100dvh - 32px);
+        overflow: auto;
+      }
+      .summary {
+        display: none;
+      }
+      .prompt-body pre {
+        max-height: none;
+        overflow: visible;
+        background: transparent;
+        padding: 4px;
+        font:
+          13px/1.7 system-ui,
+          sans-serif;
+        color: #30445e;
+      }
+      .prompt-body textarea {
+        font:
+          13px/1.7 system-ui,
+          sans-serif;
+        min-height: 320px;
+      }
+      .prompt-card {
+        scroll-margin-top: 16px;
+      }
+      .prompt-top {
+        flex-wrap: wrap;
+      }
+      .secondary {
+        font-size: 12px;
+        min-height: 36px;
+      }
+      .primary {
+        min-height: 38px;
+      }
+      .hint,
+      .privacy,
+      .panel-head p,
+      .results-foot {
+        color: #586b83;
+      }
+      .optional {
+        color: #586b83;
+      }
+      #prompt-jumps {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 0 0 14px;
+      }
+      #prompt-jumps a {
+        color: #245ca8;
+        font-size: 12px;
+        text-decoration: none;
+        padding: 5px 7px;
+        background: #eef4fc;
+        border-radius: 5px;
+      }
+      a:focus-visible {
+        outline: 3px solid #9abdf7;
+        outline-offset: 2px;
+      }
+      .edit-note {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        color: #805710;
+        background: #fff8e9;
+        font-size: 12px;
+        padding: 8px;
+        margin-bottom: 8px;
+        border-radius: 6px;
+      }
+      #copy-status {
+        color: #245ca8;
+        font-size: 12px;
+      }
+      #copy-status:empty {
+        display: none;
+      }
+      #copy-status:not(:empty) {
+        margin-bottom: 10px;
+      }
+      .placeholder {
+        padding: 26px 16px;
+      }
+      @media (max-width: 1050px) {
+        .shell {
+          grid-template-columns: 172px minmax(0, 1fr);
+        }
+        .columns {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .columns > .panel:first-child {
+          position: static;
+          max-height: none;
+          overflow: visible;
+        }
+      }
+      @media (max-width: 560px) {
+        .shell {
+          display: block;
+        }
+        .top {
+          padding: 12px 14px;
+        }
+        .brand {
+          font-size: 15px;
+        }
+        .sidebar {
+          padding: 10px 12px;
+        }
+        .nav {
+          flex-direction: row;
+          flex-wrap: wrap;
+          overflow: visible;
+        }
+        .nav-item:disabled {
+          display: flex;
+          flex: 0 0 auto;
+          padding: 3px 6px;
+        }
+        .nav-item:disabled .nav-icon {
+          display: none;
+        }
+        .nav-item:disabled .nav-sub {
+          display: none;
+        }
+        .nav-item:disabled .nav-title {
+          font-weight: 500;
+          font-size: 11px;
+        }
+        .nav-divider {
+          display: block;
+          width: 100%;
+          margin: 2px 0;
+          border: 0;
+        }
+        .nav-divider::after {
+          content: 'Coming soon';
+          font-size: 10px;
+          color: #64748b;
+        }
+        html[lang='zh-CN'] .nav-divider::after {
+          content: '即将推出';
+        }
+        .nav-item:not(:disabled) {
+          min-height: 44px;
+        }
+        .intro h1 {
+          font-size: 22px;
+        }
+        .prompt-body pre {
+          font-size: 13px;
+        }
+        .card-actions {
+          margin-left: auto;
+        }
+        .main {
+          padding: 16px 12px;
+        }
+        .content,
+        .panel-head {
+          padding: 14px;
+        }
+        #prompt-jumps a {
+          min-height: 36px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="top">
+        <span class="brand">prompts.yifan.men</span>
+        <div class="top-right">
+          <span class="status">DESIGN MOCK · v0.4</span
+          ><button id="ui-lang" class="secondary" type="button">
+            EN / 中文
+          </button>
+        </div>
+      </div>
+    </header>
+    <div class="shell">
+      <aside class="sidebar" aria-label="Workflow navigation">
+        <div class="nav-label" data-i="workflows">WORKFLOWS</div>
+        <nav class="nav">
+          <button
+            class="nav-item selected"
+            type="button"
+            data-mode="feature"
+            aria-current="page"
+          >
+            <span class="nav-icon" aria-hidden="true">⌘</span
+            ><span class="nav-main"
+              ><span class="nav-title" data-i="feature"
+                >Implement a Feature</span
+              ><span class="nav-sub" data-i="featureShort"
+                >Build, test, review</span
+              ></span
+            >
+          </button>
+          <button class="nav-item" type="button" data-mode="refine">
+            <span class="nav-icon" aria-hidden="true">✦</span
+            ><span class="nav-main"
+              ><span class="nav-title" data-i="refine">Refine My Prompt</span
+              ><span class="nav-sub" data-i="refineShort"
+                >Preserve & clarify</span
+              ></span
+            >
+          </button>
+          <div class="nav-divider"></div>
+          <button class="nav-item" type="button" disabled>
+            <span class="nav-icon" aria-hidden="true">◈</span
+            ><span class="nav-main"
+              ><span class="nav-title" data-i="learn">Learn a Concept</span
+              ><span class="nav-sub" data-i="soon">Coming soon</span></span
+            >
+          </button>
+          <button class="nav-item" type="button" disabled>
+            <span class="nav-icon" aria-hidden="true">✉</span
+            ><span class="nav-main"
+              ><span class="nav-title" data-i="reply">Professional Reply</span
+              ><span class="nav-sub" data-i="soon">Coming soon</span></span
+            >
+          </button>
+          <button class="nav-item" type="button" disabled>
+            <span class="nav-icon" aria-hidden="true">⌁</span
+            ><span class="nav-main"
+              ><span class="nav-title" data-i="review">Code Review</span
+              ><span class="nav-sub" data-i="soon">Coming soon</span></span
+            >
+          </button>
+          <button class="nav-item" type="button" disabled>
+            <span class="nav-icon" aria-hidden="true">☼</span
+            ><span class="nav-main"
+              ><span class="nav-title" data-i="ideas">Explore Ideas</span
+              ><span class="nav-sub" data-i="soon">Coming soon</span></span
+            >
+          </button>
+        </nav>
+        <div class="side-note" data-i="sidebarNote">
+          No AI usage, account or data storage. This is an interactive design
+          prototype.
+        </div>
+      </aside>
+      <main class="main">
+        <div class="intro">
+          <div class="eyebrow" data-i="kicker">GUIDED PROMPT WORKSPACE</div>
+          <h1 data-i="headline">From your idea to a usable prompt.</h1>
+          <p data-i="lead">
+            Type on the left. Watch your prompts update on the right — no extra
+            steps.
+          </p>
+        </div>
+        <div class="columns">
+          <section class="panel" aria-labelledby="input-title">
+            <div class="panel-head">
+              <h2 id="input-title">Implement a Feature</h2>
+              <p id="input-sub">
+                Describe your goal. A little context is optional.
+              </p>
+            </div>
+            <div class="content">
+              <div id="feature-fields">
+                <div class="field-block">
+                  <label class="label" for="goal" data-i="goalLabel"
+                    >What do you want to build? *</label
+                  ><textarea
+                    id="goal"
+                    placeholder="e.g. Add Google Login to my website"
+                  ></textarea>
+                  <div class="hint" data-i="goalHint">
+                    One sentence is enough to get started.
+                  </div>
+                </div>
+                <div class="field-block">
+                  <label class="label" for="context" data-i="contextLabel"
+                    >Anything else we should consider? (optional)</label
+                  ><textarea
+                    id="context"
+                    placeholder="e.g. Keep the existing UI and avoid extra dependencies"
+                  ></textarea>
+                  <div class="hint" data-i="contextHint">
+                    Tech stack, constraints and edge cases can go here.
+                  </div>
+                </div>
+                <button
+                  id="sample"
+                  type="button"
+                  class="secondary"
+                  data-i="sample"
+                >
+                  Try an example
+                </button>
+              </div>
+              <div id="refine-fields" hidden>
+                <div class="field-block">
+                  <label class="label" for="draft" data-i="draftLabel"
+                    >Paste your existing prompt *</label
+                  ><textarea
+                    id="draft"
+                    placeholder="Paste your prompt, rough notes, or fragmented thoughts..."
+                  ></textarea>
+                  <div class="hint" data-i="refineHint">
+                    Original text is preserved inside a fenced code block; the
+                    review-first instruction is appended exactly.
+                  </div>
+                </div>
+              </div>
+              <div class="input-footer">
+                <span class="privacy" data-i="privacy"
+                  >Private in this page · No AI calls · Nothing saved</span
+                ><button
+                  id="clear"
+                  type="button"
+                  class="secondary"
+                  data-i="clear"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="output-title">
+            <div class="panel-head">
+              <h2 id="output-title" data-i="previewTitle">
+                Live Prompt Preview
+              </h2>
+              <p data-i="previewSub">
+                The result updates automatically as you type.
+              </p>
+            </div>
+            <div class="content">
+              <div id="copy-status" role="status" aria-live="polite"></div>
+              <div class="preview-tools">
+                <label for="output-lang"
+                  ><span data-i="outputLanguage">Prompt language</span>
+                  <select id="output-lang">
+                    <option value="en">English</option>
+                    <option value="zh">中文</option>
+                  </select></label
+                ><button
+                  type="button"
+                  class="primary"
+                  id="copy-all"
+                  disabled
+                  data-i="copyAll"
+                >
+                  Copy all
+                </button>
+              </div>
+              <p id="preview-language-note" class="hint" hidden></p>
+              <div id="empty" class="placeholder" data-i="empty">
+                Start describing what you want to build to see your prompt set
+                here.
+              </div>
+              <div id="results" hidden>
+                <div class="summary" id="summary" hidden></div>
+                <nav id="prompt-jumps" aria-label="Prompts"></nav>
+                <div id="prompt-list"></div>
+                <p class="results-foot" data-i="resultNote">
+                  These prompts are deterministic templates, not AI-generated
+                  answers. Manual edits stay until you choose Use latest
+                  generated.
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+        <footer data-i="footer">
+          M1 interactive HTML mock v0.4 · Feedback welcome in GitHub PR #3
+        </footer>
+      </main>
+    </div>
+    <script>
+      (function () {
+        'use strict';
+        const get = (id) => document.getElementById(id);
+        let ui = 'en',
+          mode = 'feature',
+          prompts = [],
+          generated = [],
+          generatedKey = '';
+        const drafts = { feature: [], refine: [] };
+        const suffix =
+          "First, review my full message and any attached files, even if my thoughts are rough, fragmented, or unfiltered. Tell me what you think I'm actually trying to achieve, then propose a plan for me to review. Stop and wait for my approval before starting the task.";
+        const tx = {
+          en: {
+            workflows: 'WORKFLOWS',
+            feature: 'Implement a Feature',
+            featureShort: 'Build, test, review',
+            refine: 'Refine My Prompt',
+            refineShort: 'Preserve & clarify',
+            learn: 'Learn a Concept',
+            reply: 'Professional Reply',
+            review: 'Code Review',
+            ideas: 'Explore Ideas',
+            soon: 'Coming soon',
+            sidebarNote:
+              'No AI usage, account or data storage. This is an interactive design prototype.',
+            kicker: 'GUIDED PROMPT WORKSPACE',
+            headline: 'From your idea to a usable prompt.',
+            lead: 'Type on the left. Watch your prompts update on the right — no extra steps.',
+            goalLabel: 'What do you want to build? *',
+            goalHint: 'One sentence is enough to get started.',
+            contextLabel: 'Anything else we should consider? (optional)',
+            contextHint: 'Tech stack, constraints and edge cases can go here.',
+            sample: 'Try an example',
+            draftLabel: 'Paste your existing prompt *',
+            refineHint:
+              'Original text is preserved inside a fenced code block; the review-first instruction is appended exactly.',
+            privacy: 'Private in this page · No AI calls · Nothing saved',
+            clear: 'Clear',
+            previewTitle: 'Live Prompt Preview',
+            previewSub: 'The result updates automatically as you type.',
+            outputLanguage: 'Prompt language',
+            copyAll: 'Copy all',
+            empty:
+              'Start describing what you want to build to see your prompt set here.',
+            emptyRefine:
+              'Paste a prompt on the left to see the wrapped result.',
+            resultNote:
+              'These are deterministic templates, not AI-generated answers. Manual edits stay until you choose Use latest generated.',
+            footer:
+              'M1 interactive HTML mock v0.4 · Feedback welcome in GitHub PR #3',
+            featureInputSub:
+              'Describe your goal. A little context is optional.',
+            refineInputSub:
+              "Paste your message. We'll preserve it and append your exact instruction.",
+            goalPlaceholder: 'e.g. Add Google Login to my website',
+            contextPlaceholder:
+              'e.g. Keep the existing UI and avoid extra dependencies',
+            draftPlaceholder:
+              'Paste your prompt, rough notes, or fragmented thoughts...',
+            goalSummary: 'Goal',
+            contextSummary: 'Additional context',
+            none: 'Not provided',
+            wrappedSummary: 'Wrapped original prompt',
+            copy: 'Copy',
+            edit: 'Edit',
+            done: 'Done',
+            copied: 'Copied!',
+            custom: 'Edited',
+            stale:
+              'Source changed — your edit is kept. Copy includes this edit.',
+            reset: 'Use latest generated',
+            resetHint: 'Replaces your edit with the current template',
+            copyFailed: 'Copy unavailable. Select and copy the prompt text.',
+            copySuccess: 'Copied to clipboard',
+            fixedLanguage: 'Original text + fixed English instruction',
+            jump: 'Jump to prompt',
+            upcoming: 'Coming soon',
+            exampleLoaded: 'Example loaded',
+            exampleUndo: 'Undo example',
+          },
+          zh: {
+            workflows: '工作流',
+            feature: '实现一个功能',
+            featureShort: '开发、测试、审查',
+            refine: '优化我的 Prompt',
+            refineShort: '保留原文，先澄清',
+            learn: '学习一个概念',
+            reply: '专业地回复',
+            review: '代码审查',
+            ideas: '启发思路',
+            soon: '即将推出',
+            sidebarNote:
+              '不调用 AI，不需要账户，也不保存数据。这是可交互设计原型。',
+            kicker: '结构化 PROMPT 工作台',
+            headline: '从想法到可以直接使用的 Prompt。',
+            lead: '在左侧输入，右侧实时更新。不需要额外操作。',
+            goalLabel: '你想实现什么功能？ *',
+            goalHint: '一句话就可以开始。',
+            contextLabel: '还有什么需要考虑？（选填）',
+            contextHint: '技术栈、限制或边界情况可填写在这里。',
+            sample: '试用示例',
+            draftLabel: '粘贴已有 Prompt *',
+            refineHint: '原文会放入代码块，并逐字追加先审阅后执行的指令。',
+            privacy: '仅在当前页面中使用 · 不调用 AI · 不保存',
+            clear: '清空',
+            previewTitle: '实时 Prompt 预览',
+            previewSub: '输入变化时，右侧会自动更新。',
+            outputLanguage: 'Prompt 输出语言',
+            copyAll: '复制全部',
+            empty: '在左侧描述你想实现的功能，就能预览 Prompt Set。',
+            emptyRefine: '在左侧粘贴 Prompt，右侧就会显示包装结果。',
+            resultNote:
+              '结果来自确定性模板，并非 AI 生成。手动编辑会保留，直到你选择「使用最新生成内容」。',
+            footer: 'M1 交互式 HTML Mock v0.4 · 欢迎在 GitHub PR #3 反馈',
+            featureInputSub: '描述功能目标，额外背景完全可选。',
+            refineInputSub: '粘贴原文，我们会保留它并添加你的指定指令。',
+            goalPlaceholder: '例如：给网站增加 Google 登录',
+            contextPlaceholder: '例如：保持现有 UI，避免新依赖',
+            draftPlaceholder: '粘贴 Prompt、草稿或零散想法……',
+            goalSummary: '目标',
+            contextSummary: '额外背景',
+            none: '未提供',
+            wrappedSummary: '包装后的原始 Prompt',
+            copy: '复制',
+            edit: '编辑',
+            done: '完成',
+            copied: '已复制',
+            custom: '已编辑',
+            stale: '来源已变化，已保留你的编辑。复制将包含此编辑。',
+            reset: '使用最新生成内容',
+            resetHint: '用当前模板替换你的编辑',
+            copyFailed: '无法复制，请选中 Prompt 内容手动复制。',
+            copySuccess: '已复制到剪贴板',
+            fixedLanguage: '原文 + 固定英文指令',
+            jump: '跳转到 Prompt',
+            upcoming: '即将推出',
+            exampleLoaded: '已载入示例',
+            exampleUndo: '撤销示例',
+          },
+        };
+        const steps = {
+          en: [
+            'Clarify Requirements',
+            'Plan Implementation',
+            'Implement Feature',
+            'Test & Verify',
+            'Review Code',
+          ],
+          zh: [
+            '澄清需求',
+            '制定实现计划',
+            '实现功能',
+            '测试和验证',
+            '代码审查',
+          ],
+        };
+        const bodies = {
+          en: [
+            'Before implementing, clarify only material questions. Distinguish confirmed requirements from assumptions; do not invent missing facts.',
+            'Prepare a practical, minimal implementation plan. Identify necessary dependencies and ask for relevant repository context if unavailable.',
+            'Implement in small reviewable changes. Inspect the actual code before making edits; respect explicitly given constraints.',
+            'Outline tests for expected behavior, failures, edge cases, and regressions. Label unconfirmed acceptance criteria as suggestions.',
+            'Ask for the actual code or diff before reviewing. Report concrete correctness, security and maintainability findings by severity.',
+          ],
+          zh: [
+            '实现前仅澄清关键问题。区分明确需求与假设，不要编造缺失信息。',
+            '制定简洁、可执行的计划。识别必要依赖，如果缺少仓库上下文请先询问。',
+            '以便于审查的小步实现。改动前先查看实际代码，并遵守明确约束。',
+            '覆盖正常行为、失败场景、边界情况和回归测试。将未确定的验收条件标为建议。',
+            '先获取实际代码或 Diff，再按照严重程度报告具体的正确性、安全性和可维护性问题。',
+          ],
+        };
+        function build() {
+          const lang = get('output-lang').value;
+          if (mode === 'refine') {
+            const input = get('draft').value;
+            if (!input.length) return [];
+            const tick = String.fromCharCode(96),
+              runs = input.match(new RegExp(tick + '+', 'g')) || [],
+              fence = tick.repeat(
+                runs.reduce(
+                  (length, run) => Math.max(length, run.length + 1),
+                  3,
+                ),
+              );
+            return [fence + '\n' + input + '\n' + fence + '\n\n' + suffix];
+          }
+          const goal = get('goal').value.trim(),
+            context = get('context').value.trim();
+          if (!goal) return [];
+          return steps[lang].map((_, i) => {
+            const intro =
+              lang === 'zh'
+                ? '你是一名资深软件工程师。'
+                : 'You are a senior software engineer.';
+            const base =
+              (lang === 'zh' ? '功能目标：\n' : 'Feature goal:\n') +
+              goal +
+              (context
+                ? '\n\n' +
+                  (lang === 'zh' ? '额外背景：\n' : 'Additional context:\n') +
+                  context
+                : '');
+            return intro + '\n\n' + base + '\n\n' + bodies[lang][i];
+          });
+        }
+        function node(tag, className, text) {
+          const el = document.createElement(tag);
+          if (className) el.className = className;
+          if (text !== undefined) el.textContent = text;
+          return el;
+        }
+        async function copyText(s, button) {
+          const w = tx[ui];
+          try {
+            if (!navigator.clipboard?.writeText) throw new Error('Unavailable');
+            await navigator.clipboard.writeText(s);
+            get('copy-status').textContent = w.copySuccess;
+            button.textContent = w.copied;
+            setTimeout(() => {
+              if (button.isConnected)
+                button.textContent =
+                  button.id === 'copy-all'
+                    ? mode === 'refine'
+                      ? tx[ui].copy
+                      : tx[ui].copyAll
+                    : tx[ui].copy;
+            }, 1300);
+          } catch {
+            get('copy-status').textContent = w.copyFailed;
+          }
+        }
+        function render() {
+          const lang = get('output-lang').value,
+            w = tx[ui],
+            list = get('prompt-list');
+          list.replaceChildren();
+          get('prompt-jumps').replaceChildren();
+          get('output-lang').disabled = mode === 'refine';
+          get('output-lang').parentElement.hidden = mode === 'refine';
+          get('preview-language-note').hidden = mode !== 'refine';
+          get('preview-language-note').textContent = w.fixedLanguage;
+          get('copy-all').textContent = mode === 'refine' ? w.copy : w.copyAll;
+          get('empty').hidden = prompts.length > 0;
+          get('results').hidden = prompts.length === 0;
+          get('copy-all').disabled = !prompts.length;
+          get('empty').textContent =
+            mode === 'refine' ? w.emptyRefine : w.empty;
+          if (!prompts.length) return;
+          get('summary').textContent =
+            mode === 'feature'
+              ? w.goalSummary +
+                ': ' +
+                get('goal').value.trim() +
+                '\n' +
+                w.contextSummary +
+                ': ' +
+                (get('context').value.trim() || w.none)
+              : w.wrappedSummary +
+                ': ' +
+                get('draft').value.length +
+                ' characters';
+          prompts.forEach((text, i) => {
+            const draft = drafts[mode][i];
+            const card = node('article', 'prompt-card'),
+              head = node('div', 'prompt-top'),
+              num = node('span', 'bubble', String(i + 1)),
+              title = node(
+                'div',
+                'prompt-name',
+                mode === 'feature' ? steps[lang][i] : w.wrappedSummary,
+              ),
+              acts = node('div', 'card-actions'),
+              edit = node('button', 'secondary', w.edit),
+              cp = node('button', 'secondary', w.copy),
+              body = node('div', 'prompt-body'),
+              pre = node('pre', '', text),
+              area = node('textarea');
+            edit.type = cp.type = 'button';
+            area.value = text;
+            area.hidden = true;
+            area.setAttribute('aria-label', title.textContent);
+            head.append(num, title, acts);
+            acts.append(edit, cp);
+            body.append(pre, area);
+            card.append(head, body);
+            list.append(card);
+            card.id = 'prompt-' + i;
+            pre.tabIndex = 0;
+            if (mode === 'feature') {
+              const jump = node('a', '', String(i + 1) + '. ' + steps[lang][i]);
+              jump.href = '#' + card.id;
+              get('prompt-jumps').append(jump);
+            }
+            if (draft) {
+              const note = node(
+                  'div',
+                  'edit-note',
+                  draft.base !== generated[i] ? w.stale : w.custom,
+                ),
+                reset = node('button', 'secondary', w.reset);
+              reset.type = 'button';
+              reset.title = w.resetHint;
+              note.append(reset);
+              body.prepend(note);
+              reset.addEventListener('click', () => {
+                drafts[mode][i] = null;
+                prompts[i] = generated[i];
+                render();
+                get('prompt-' + i)
+                  .querySelector('button')
+                  .focus();
+              });
+            }
+            cp.setAttribute('aria-label', w.copy + ': ' + title.textContent);
+            edit.setAttribute('aria-label', w.edit + ': ' + title.textContent);
+            edit.addEventListener('click', () => {
+              const opened = area.hidden;
+              area.hidden = !opened;
+              pre.hidden = opened;
+              edit.textContent = opened ? w.done : w.edit;
+              if (opened) area.focus();
+              else {
+                render();
+                get('prompt-' + i)
+                  .querySelector('button')
+                  .focus();
+              }
+            });
+            area.addEventListener('input', () => {
+              prompts[i] = area.value;
+              pre.textContent = area.value;
+              drafts[mode][i] = {
+                text: area.value,
+                base: draft ? draft.base : generated[i],
+              };
+            });
+            cp.addEventListener('click', () => copyText(prompts[i], cp));
+          });
+        }
+        function refresh() {
+          get('copy-status').textContent = '';
+          const key = JSON.stringify([
+            mode,
+            get('goal').value,
+            get('context').value,
+            get('draft').value,
+            get('output-lang').value,
+          ]);
+          if (key !== generatedKey) {
+            generatedKey = key;
+            generated = build();
+            prompts = generated.map((text, i) => drafts[mode][i]?.text ?? text);
+          }
+          render();
+        }
+        function setMode(next) {
+          mode = next;
+          get('feature-fields').hidden = mode !== 'feature';
+          get('refine-fields').hidden = mode !== 'refine';
+          document.querySelectorAll('[data-mode]').forEach((b) => {
+            const selected = b.dataset.mode === mode;
+            b.classList.toggle('selected', selected);
+            if (selected) b.setAttribute('aria-current', 'page');
+            else b.removeAttribute('aria-current');
+          });
+          localize();
+          refresh();
+        }
+        function localize() {
+          const w = tx[ui];
+          document.documentElement.lang = ui === 'zh' ? 'zh-CN' : 'en';
+          document
+            .querySelectorAll('[data-i]')
+            .forEach((e) => (e.textContent = w[e.dataset.i]));
+          get('input-title').textContent = w[mode];
+          get('input-sub').textContent = w[mode + 'InputSub'];
+          get('goal').placeholder = w.goalPlaceholder;
+          get('context').placeholder = w.contextPlaceholder;
+          get('draft').placeholder = w.draftPlaceholder;
+          get('sample').textContent = sampleBackup ? w.exampleUndo : w.sample;
+          document
+            .querySelector('.sidebar')
+            .setAttribute('aria-label', w.workflows);
+          get('prompt-jumps').setAttribute('aria-label', w.jump);
+          get('ui-lang').setAttribute(
+            'aria-label',
+            ui === 'en' ? 'Switch UI to Chinese' : '界面切换为英语',
+          );
+          render();
+        }
+        document
+          .querySelectorAll('[data-mode]')
+          .forEach((b) =>
+            b.addEventListener('click', () => setMode(b.dataset.mode)),
+          );
+        for (const name of ['goal', 'context', 'draft'])
+          get(name).addEventListener('input', () => {
+            sampleBackup = null;
+            get('sample').textContent = tx[ui].sample;
+            refresh();
+          });
+        get('output-lang').addEventListener('change', refresh);
+        get('ui-lang').addEventListener('click', () => {
+          ui = ui === 'en' ? 'zh' : 'en';
+          localize();
+        });
+        let sampleBackup = null;
+        get('sample').addEventListener('click', () => {
+          if (sampleBackup) {
+            get('goal').value = sampleBackup.goal;
+            get('context').value = sampleBackup.context;
+            sampleBackup = null;
+            get('sample').textContent = tx[ui].sample;
+            refresh();
+            return;
+          }
+          sampleBackup = {
+            goal: get('goal').value,
+            context: get('context').value,
+          };
+          get('sample').textContent = tx[ui].exampleUndo;
+          get('goal').value =
+            ui === 'zh'
+              ? '为网站增加 Google 登录'
+              : 'Add Google Login to my website';
+          get('context').value =
+            ui === 'zh'
+              ? '保持现有界面，避免不必要的新依赖。'
+              : 'Preserve the existing UI and avoid unnecessary dependencies.';
+          refresh();
+        });
+        get('clear').addEventListener('click', () => {
+          drafts[mode] = [];
+          sampleBackup = null;
+          get('sample').textContent = tx[ui].sample;
+          if (mode === 'feature') {
+            get('goal').value = '';
+            get('context').value = '';
+          } else get('draft').value = '';
+          refresh();
+        });
+        get('copy-all').addEventListener('click', () => {
+          const lang = get('output-lang').value;
+          const text =
+            prompts.length === 1
+              ? prompts[0]
+              : prompts
+                  .map((p, i) => i + 1 + '. ' + steps[lang][i] + '\n\n' + p)
+                  .join('\n\n-----\n\n');
+          copyText(text, get('copy-all'));
+        });
+        setMode('feature');
+      })();
+    </script>
+  </body>
+</html>
