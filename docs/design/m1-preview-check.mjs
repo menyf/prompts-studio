@@ -1,7 +1,8 @@
-const { chromium } = require(
-  process.env.PLAYWRIGHT_MODULE || '@playwright/test',
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const { chromium } = await import(
+  process.env.PLAYWRIGHT_MODULE || '@playwright/test'
 );
-const assert = require('node:assert/strict');
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
@@ -18,7 +19,7 @@ const assert = require('node:assert/strict');
           line && (!line.startsWith('#') || line.startsWith('#HttpOnly_')),
       )
       .map((line) => {
-        const [domain, flag, path, secure, expires, name, value] = line
+        const [domain, , path, secure, expires, name, value] = line
           .replace(/^#HttpOnly_/, '')
           .split('\t');
         return {
