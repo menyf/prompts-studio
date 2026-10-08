@@ -1,278 +1,61 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex, nofollow" />
-  <title>M1 Interactive Mock · prompts.yifan.men</title>
-  <style>
-    :root { font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:#17233a; background:#f7f9fc; font-synthesis:none; }
-    * { box-sizing:border-box; }
-    body { margin:0; }
-    button,select,textarea { font:inherit; }
-    button { cursor:pointer; }
-    button:focus-visible,select:focus-visible,textarea:focus-visible { outline:3px solid #92b7ff; outline-offset:2px; }
-    .header { background:#fff; border-bottom:1px solid #e5eaf2; }
-    .header-inner { max-width:1240px; margin:auto; padding:16px 28px; display:flex; align-items:center; justify-content:space-between; gap:20px; }
-    .brand { font-size:18px; letter-spacing:-.03em; font-weight:800; color:#192b4d; }
-    .header-right { display:flex; align-items:center; gap:12px; }
-    .tiny-tag { background:#eaf2ff; color:#205bb6; font-size:11px; font-weight:700; border-radius:20px; padding:5px 9px; }
-    .lang-switch { border:1px solid #dce3ef; background:white; color:#2c4161; border-radius:8px; padding:8px 11px; }
-    main { max-width:1240px; margin:0 auto; padding:34px 28px 80px; }
-    .eyebrow { text-transform:uppercase; color:#4973b5; letter-spacing:.14em; font-size:11px; font-weight:800; }
-    h1 { font-size:clamp(30px,4vw,44px); letter-spacing:-.045em; line-height:1.12; margin:11px 0 12px; }
-    .intro { color:#64728b; font-size:16px; line-height:1.6; max-width:800px; margin:0 0 28px; }
-    .layout { display:grid; grid-template-columns:minmax(0, .85fr) minmax(0,1.15fr); gap:18px; align-items:start; }
-    .panel { background:#fff; border:1px solid #e3e9f2; border-radius:16px; box-shadow:0 6px 22px rgba(32,54,91,.035); padding:24px; min-width:0; }
-    .panel-title { display:flex; gap:10px; align-items:center; font-size:19px; letter-spacing:-.025em; font-weight:800; margin:0 0 9px; }
-    .symbol { display:grid; place-items:center; width:32px; height:32px; flex:none; background:#eaf2ff; color:#2563eb; border-radius:9px; font-weight:800; }
-    .muted { color:#697790; font-size:13px; line-height:1.6; }
-    label { display:block; font-size:13px; font-weight:750; margin:22px 0 9px; }
-    .optional { color:#8793a7; font-weight:500; }
-    textarea { border:1px solid #d7e0ed; border-radius:10px; width:100%; resize:vertical; padding:14px; color:#263957; background:#fff; line-height:1.55; min-height:118px; }
-    #goal { min-height:145px; }
-    #context { min-height:115px; }
-    textarea::placeholder { color:#9ba7ba; }
-    .counter { color:#95a2b5; font-size:11px; text-align:right; padding-top:4px; }
-    .error { display:none; color:#b42318; font-size:12px; margin:8px 0; }
-    .primary { background:#2469e8; border:1px solid #2469e8; color:white; border-radius:10px; padding:13px 17px; font-weight:750; transition:background .15s; }
-    .primary:hover { background:#1556cd; }
-    .primary:disabled { background:#95b4ea; border-color:#95b4ea; cursor:not-allowed; }
-    .full { width:100%; margin-top:20px; }
-    .note { display:flex; gap:8px; align-items:center; color:#7c8aa0; font-size:12px; margin:14px 0 0; }
-    .results-top { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; }
-    .actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-    .actions label { margin:0; font-weight:600; color:#738097; font-size:11px; }
-    select { border:1px solid #dae2ee; border-radius:8px; background:#fff; padding:8px 26px 8px 9px; color:#233854; font-size:12px; }
-    .outline { border:1px solid #dbe3ee; background:#fff; border-radius:8px; padding:9px 11px; color:#273d5c; font-size:12px; font-weight:700; }
-    .outline:hover { background:#f0f5fc; }
-    .outline:disabled { opacity:.5; cursor:not-allowed; }
-    .summary { background:#f0f6ff; border:1px solid #e4edfd; border-radius:11px; padding:15px; margin:20px 0 14px; overflow-wrap:anywhere; }
-    .summary-title { font-size:13px; font-weight:800; margin-bottom:10px; }
-    .summary-row { color:#50627d; font-size:12px; line-height:1.6; margin:5px 0; white-space:pre-wrap; }
-    .summary-row strong { color:#283b56; }
-    .empty { text-align:center; padding:50px 14px; color:#8290a5; }
-    .empty .empty-icon { font-size:30px; margin-bottom:12px; }
-    .prompt-item { border:1px solid #e2e9f3; border-radius:11px; padding:13px 14px; margin:10px 0; }
-    .item-head { display:flex; gap:12px; align-items:flex-start; }
-    .step-num { color:#1d6de8; background:#eaf3ff; border-radius:50%; width:31px; height:31px; flex:none; display:grid; place-items:center; font-size:13px; font-weight:800; }
-    .item-main { flex:1; min-width:0; }
-    .item-title { font-size:14px; font-weight:800; margin-bottom:3px; }
-    .item-sub { color:#8290a6; font-size:12px; line-height:1.5; }
-    .item-tools { display:flex; gap:6px; flex-wrap:wrap; justify-content:end; }
-    .prompt-preview { color:#536681; background:#f7f9fc; padding:10px 12px; margin:10px 0 0 43px; border-radius:8px; font-size:12px; white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.55; }
-    .prompt-edit { display:none; min-height:190px; margin:12px 0 0 43px; width:calc(100% - 43px); font-size:12px; }
-    .item-open .prompt-preview { display:none; }
-    .item-open .prompt-edit { display:block; }
-    .footer { color:#96a1b2; margin-top:18px; text-align:center; font-size:11px; }
-    @media(max-width:850px) { .layout { grid-template-columns:1fr; } .panel{padding:18px;} main{padding:25px 15px 56px;} .header-inner{padding:13px 15px;} .item-head{flex-wrap:wrap;} .item-tools{margin-left:43px;} }
-    @media(max-width:430px) { .brand { font-size:15px; } .tiny-tag { display:none; } .actions{width:100%;} .actions label{width:100%;} .prompt-preview,.prompt-edit{margin-left:0;width:100%;} }
-  </style>
-</head>
-<body>
-  <header class="header">
-    <div class="header-inner">
-      <div class="brand">prompts.yifan.men</div>
-      <div class="header-right"><span class="tiny-tag">M1 · HTML MOCK</span><button class="lang-switch" id="ui-language" type="button" aria-label="Switch interface language">EN / 中文</button></div>
-    </div>
-  </header>
-  <main>
-    <div class="eyebrow" id="eyebrow">Guided prompt workflow</div>
-    <h1 id="headline">Think clearly. Build better prompt sets.</h1>
-    <p class="intro" id="intro">Turn a feature idea into a reusable sequence of prompts. No AI integration, accounts, or project setup required.</p>
-    <div class="layout">
-      <section class="panel" aria-labelledby="form-title">
-        <h2 class="panel-title" id="form-title"><span class="symbol">⚡</span><span id="form-heading">Implement a Feature</span></h2>
-        <p class="muted" id="form-intro">Describe what you want to build. We'll organize the next steps into reusable prompts.</p>
-        <label for="goal" id="goal-label">What do you want to build? <span style="color:#cc3643">*</span></label>
-        <textarea id="goal" maxlength="1000" placeholder="e.g. Add Google Login to my website"></textarea>
-        <div class="counter" id="goal-count">0 / 1000</div>
-        <div class="error" role="alert" id="goal-error">Please enter a feature goal.</div>
-        <label for="context" id="context-label">Anything else we should consider? <span class="optional">(optional)</span></label>
-        <p class="muted" id="context-help" style="margin:0 0 10px;">Constraints, tech stack, edge cases, or other details. Feel free to leave this blank.</p>
-        <textarea id="context" maxlength="1000" placeholder="e.g. Keep the current UI style. Avoid new dependencies."></textarea>
-        <div class="counter" id="context-count">0 / 1000</div>
-        <button class="primary full" id="generate" type="button">Generate Prompt Set →</button>
-        <p class="note" id="cost-note">ⓘ No AI tokens, sign-in, or database required. Nothing is saved.</p>
-      </section>
-      <section class="panel" aria-labelledby="result-title">
-        <div class="results-top">
-          <div>
-            <h2 class="panel-title" id="result-title" style="margin-bottom:4px;"><span class="symbol">☷</span><span id="result-heading">Prompt Set</span></h2>
-            <div class="muted" id="result-intro">Five practical prompts to take your idea through implementation.</div>
-          </div>
-          <div class="actions">
-            <label for="output-language" id="output-label">Prompt language</label>
-            <select id="output-language"><option value="en">English</option><option value="zh">中文</option></select>
-            <button type="button" class="outline" id="copy-all" disabled>Copy all</button>
-          </div>
-        </div>
-        <div id="empty" class="empty"><div class="empty-icon">✦</div><div id="empty-text">Describe your goal, then select Generate Prompt Set to preview the result.</div></div>
-        <div id="generated" hidden>
-          <div class="summary">
-            <div class="summary-title" id="summary-title">Goal Summary</div>
-            <div class="summary-row"><strong id="summary-goal-label">Goal:</strong> <span id="summary-goal"></span></div>
-            <div class="summary-row"><strong id="summary-context-label">Additional context:</strong> <span id="summary-context"></span></div>
-          </div>
-          <div id="prompt-list"></div>
-        </div>
-      </section>
-    </div>
-    <div class="footer" id="footer">Interactive product mock v0.1 · Deterministic sample templates · Not production functionality</div>
-  </main>
-  <script>
-    (function () {
-      "use strict";
-      var $ = function (id) { return document.getElementById(id); };
-      var ui = "en";
-      var current = null;
-      var titles = {
-        en: ["Clarify Requirements", "Plan Implementation", "Implement Feature", "Test & Verify", "Review Code"],
-        zh: ["澄清需求", "制定实现计划", "实现功能", "测试与验证", "代码审查"]
-      };
-      var subtitles = {
-        en: ["Identify key decisions without assuming missing facts.", "Prepare an actionable implementation plan.", "Implement with explicit requirements and constraints.", "Verify the feature and important edge cases.", "Review correctness, security, and maintainability."],
-        zh: ["识别关键决策，不擅自补全信息。", "形成可执行的开发计划。", "根据明确需求和约束实现功能。", "验证功能和重要边界情况。", "检查正确性、安全性及可维护性。"]
-      };
-      var translations = {
-        en: {
-          eyebrow:"Guided prompt workflow", headline:"Think clearly. Build better prompt sets.",
-          intro:"Turn a feature idea into a reusable sequence of prompts. No AI integration, accounts, or project setup required.",
-          formHeading:"Implement a Feature", formIntro:"Describe what you want to build. We'll organize the next steps into reusable prompts.",
-          goalLabel:'What do you want to build? <span style="color:#cc3643">*</span>',
-          goalPlaceholder:"e.g. Add Google Login to my website",
-          contextLabel:'Anything else we should consider? <span class="optional">(optional)</span>',
-          contextHelp:"Constraints, tech stack, edge cases, or other details. Feel free to leave this blank.",
-          contextPlaceholder:"e.g. Keep the current UI style. Avoid new dependencies.",
-          generate:"Generate Prompt Set →", cost:"ⓘ No AI tokens, sign-in, or database required. Nothing is saved.",
-          resultHeading:"Prompt Set", resultIntro:"Five practical prompts to take your idea through implementation.",
-          outputLabel:"Prompt language", copyAll:"Copy all", summaryTitle:"Goal Summary",
-          summaryGoal:"Goal:", summaryContext:"Additional context:", notProvided:"Not specified",
-          empty:"Describe your goal, then select Generate Prompt Set to preview the result.",
-          error:"Please enter a feature goal.", edit:"Edit", done:"Done", copy:"Copy", copied:"Copied!",
-          footer:"Interactive product mock v0.1 · Deterministic sample templates · Not production functionality"
-        },
-        zh: {
-          eyebrow:"结构化 Prompt 工作流", headline:"理清思路，构建更好的 Prompt Set。",
-          intro:"将一个功能想法变成可复用的分步 Prompt。无需 AI API、账户或项目设置。",
-          formHeading:"实现一个功能", formIntro:"简单描述想做的功能，我们帮你整理成可复用的 Prompt 流程。",
-          goalLabel:'你想实现什么功能？ <span style="color:#cc3643">*</span>',
-          goalPlaceholder:"例如：给网站增加 Google 登录",
-          contextLabel:'还有什么需要特别考虑？ <span class="optional">（选填）</span>',
-          contextHelp:"可以填写技术栈、限制、边界情况等，也可以留空。",
-          contextPlaceholder:"例如：沿用现有 UI；尽量不增加依赖。",
-          generate:"生成 Prompt Set →", cost:"ⓘ 无 AI Token 消耗，无需登录或数据库，也不会保存你的输入。",
-          resultHeading:"Prompt Set", resultIntro:"五个可以分别复制使用的功能开发 Prompt。",
-          outputLabel:"Prompt 输出语言", copyAll:"复制全部", summaryTitle:"需求概览",
-          summaryGoal:"目标：", summaryContext:"额外背景：", notProvided:"未提供",
-          empty:"输入功能目标并点击生成，即可预览 Prompt Set。",
-          error:"请先描述你想实现的功能。", edit:"编辑", done:"完成", copy:"复制", copied:"已复制！",
-          footer:"交互式产品原型 v0.1 · 静态规则模板 · 非正式产品功能"
-        }
-      };
-      function renderTemplate(index, goal, context, lang) {
-        var ctx = context.trim()
-          ? (lang === "zh" ? "\n额外背景/约束：\n" : "\nAdditional context / constraints:\n") + context.trim() + "\n"
-          : "";
-        if (lang === "zh") {
-          var pre = "功能目标：\n" + goal + "\n" + ctx;
-          return [
-            "你是一名有经验的软件工程师。请先帮助我澄清需求，不要直接写代码。\n" + pre + "\n识别会影响实现的关键未决问题，只提出必要的问题。不要自行假定未提供的技术细节，明确区分已知事实与建议。",
-            "你是一名软件架构与交付顾问。请根据以下信息制定可执行的实现计划：\n" + pre + "\n给出主要步骤、依赖、潜在风险和需要确认的假设。若缺少代码或项目详情，请先明确需要哪些资料。",
-            "你是一名资深工程师。请协助实现以下功能：\n" + pre + "\n先确认必要信息是否齐全，再按最小改动原则逐步实现。不要凭空假定现有代码结构；若需要源码，请先提出请求。",
-            "请为以下功能制定测试与验收清单：\n" + pre + "\n涵盖主要使用路径、失败情形、边界情况及回归风险。把未经确认的要求标记为待确认，不要当作既定需求。",
-            "请对以下功能的实际实现进行代码审查：\n" + pre + "\n先索取代码或 Diff，然后按严重程度列出正确性、安全性、可维护性和测试覆盖的问题。没有看到代码时不要声称已经审查。"
-          ][index];
-        }
-        var preEn = "Feature goal:\n" + goal + "\n" + ctx;
-        return [
-          "You are an experienced software engineer. Help clarify the requirements before writing code.\n" + preEn + "\nIdentify only the critical unresolved decisions. Ask focused questions where necessary. Separate confirmed facts from recommendations; do not invent missing technical details.",
-          "You are a software implementation planner. Create a practical implementation plan for:\n" + preEn + "\nOutline milestones, dependencies, risks, and assumptions to verify. If the codebase or setup is needed, request it rather than assuming it.",
-          "You are a senior engineer. Help implement the following feature:\n" + preEn + "\nConfirm any essential missing details, then proceed in small, reviewable changes. Do not assume the current code structure; ask for source files if required.",
-          "Prepare a test and verification checklist for this feature:\n" + preEn + "\nCover the main user path, failures, edge cases, and regression risks. Clearly label any unconfirmed acceptance criteria instead of treating them as requirements.",
-          "Review the actual implementation of this feature:\n" + preEn + "\nAsk for code or a diff first. Report correctness, security, maintainability, and testing issues ordered by severity. Do not claim to have reviewed code you have not received."
-        ][index];
-      }
-      function updateCounts() {
-        $("goal-count").textContent = $("goal").value.length + " / 1000";
-        $("context-count").textContent = $("context").value.length + " / 1000";
-      }
-      function translate() {
-        var t = translations[ui];
-        document.documentElement.lang = ui === "zh" ? "zh-CN" : "en";
-        $("eyebrow").textContent=t.eyebrow; $("headline").textContent=t.headline; $("intro").textContent=t.intro;
-        $("form-heading").textContent=t.formHeading; $("form-intro").textContent=t.formIntro;
-        $("goal-label").innerHTML=t.goalLabel; $("goal").placeholder=t.goalPlaceholder;
-        $("context-label").innerHTML=t.contextLabel; $("context-help").textContent=t.contextHelp;
-        $("context").placeholder=t.contextPlaceholder; $("generate").textContent=t.generate; $("cost-note").textContent=t.cost;
-        $("result-heading").textContent=t.resultHeading; $("result-intro").textContent=t.resultIntro;
-        $("output-label").textContent=t.outputLabel; $("copy-all").textContent=t.copyAll;
-        $("summary-title").textContent=t.summaryTitle; $("summary-goal-label").textContent=t.summaryGoal;
-        $("summary-context-label").textContent=t.summaryContext; $("empty-text").textContent=t.empty;
-        $("goal-error").textContent=t.error; $("footer").textContent=t.footer;
-        if (current) { renderSummary(); renderItems(false); }
-      }
-      function renderSummary() {
-        $("summary-goal").textContent=current.goal;
-        $("summary-context").textContent=current.context || translations[ui].notProvided;
-      }
-      function renderItems(preserveEdits) {
-        var list = $("prompt-list");
-        list.replaceChildren();
-        var outputLang = $("output-language").value;
-        var t = translations[ui];
-        current.prompts = preserveEdits && current.prompts ? current.prompts : titles[outputLang].map(function (_title, i) {
-          return renderTemplate(i,current.goal,current.context,outputLang);
-        });
-        titles[outputLang].forEach(function(title,i) {
-          var card = document.createElement("article"); card.className="prompt-item";
-          var head=document.createElement("div"); head.className="item-head";
-          var num=document.createElement("span"); num.className="step-num"; num.textContent=String(i+1);
-          var main=document.createElement("div"); main.className="item-main";
-          var name=document.createElement("div"); name.className="item-title"; name.textContent=title;
-          var sub=document.createElement("div"); sub.className="item-sub"; sub.textContent=subtitles[ui][i];
-          main.append(name,sub);
-          var tools=document.createElement("div"); tools.className="item-tools";
-          var edit=document.createElement("button"); edit.className="outline"; edit.type="button"; edit.textContent=t.edit;
-          var copy=document.createElement("button"); copy.className="outline"; copy.type="button"; copy.textContent=t.copy;
-          tools.append(edit,copy); head.append(num,main,tools);
-          var preview=document.createElement("div"); preview.className="prompt-preview"; preview.textContent=current.prompts[i];
-          var area=document.createElement("textarea"); area.className="prompt-edit"; area.setAttribute("aria-label",title);
-          area.value=current.prompts[i];
-          area.addEventListener("input",function(){current.prompts[i]=area.value;preview.textContent=area.value;});
-          edit.addEventListener("click",function(){var open=card.classList.toggle("item-open"); edit.textContent=open?t.done:t.edit; if(open)area.focus();});
-          copy.addEventListener("click",function(){copyText(current.prompts[i],copy,t.copy);});
-          card.append(head,preview,area); list.append(card);
-        });
-      }
-      function copyText(value,button,original) {
-        if (!navigator.clipboard || !navigator.clipboard.writeText) {
-          window.alert(ui==="zh"?"当前浏览器无法自动复制，请展开并手动选择文本。":"Clipboard unavailable. Open a prompt and select the text manually.");
-          return;
-        }
-        navigator.clipboard.writeText(value).then(function(){button.textContent=translations[ui].copied;setTimeout(function(){button.textContent=original;},1500);}).catch(function(){window.alert("Copy failed. Please select and copy the text manually.");});
-      }
-      function generate() {
-        var goal=$("goal").value.trim();
-        if(!goal){$("goal-error").style.display="block";$("goal").focus();return;}
-        $("goal-error").style.display="none";
-        current={goal:goal,context:$("context").value.trim(),prompts:null};
-        $("empty").hidden=true;$("generated").hidden=false;$("copy-all").disabled=false;
-        renderSummary();renderItems(false);
-      }
-      $("goal").addEventListener("input",function(){$("goal-error").style.display="none";updateCounts();});
-      $("context").addEventListener("input",updateCounts);
-      $("generate").addEventListener("click",generate);
-      $("output-language").addEventListener("change",function(){if(current)renderItems(false);});
-      $("ui-language").addEventListener("click",function(){ui=ui==="en"?"zh":"en";translate();});
-      $("copy-all").addEventListener("click",function(){
-        if(!current)return;
-        var lang=$("output-language").value;
-        var content=current.prompts.map(function(p,i){return (i+1)+". "+titles[lang][i]+"\n\n"+p;}).join("\n\n-----\n\n");
-        copyText(content,$("copy-all"),translations[ui].copyAll);
-      });
-      updateCounts();translate();
-    })();
-  </script>
-</body>
-</html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>M1 Design Mock v0.2 — prompts.yifan.men</title>
+<style>
+:root{font:15px/1.5 system-ui,sans-serif;color:#18283f;background:#f7f9fc}*{box-sizing:border-box}body{margin:0}button,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #97bfff;outline-offset:2px}button:disabled{opacity:.5;cursor:not-allowed}
+header{background:white;border-bottom:1px solid #e1e8f2}.top,main{max-width:1080px;margin:auto}.top{padding:14px 22px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:850;font-size:18px;letter-spacing:-.04em}main{padding:38px 22px 64px}.hero{max-width:740px}.eyebrow{font-size:11px;font-weight:800;color:#2462b8;letter-spacing:.14em}h1{font-size:clamp(30px,4vw,42px);line-height:1.15;letter-spacing:-.05em;margin:9px 0}p{color:#687991;margin:0 0 24px}h2{font-size:17px;margin:27px 0 13px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.tile{border:1px solid #dfe7f2;background:white;border-radius:12px;text-align:left;padding:16px;min-height:114px;display:flex;flex-direction:column;gap:7px}.tile.active{border:2px solid #2670e5;padding:15px;background:#f8fbff}.tile:hover:not(:disabled){border-color:#6da2e8}.tile:disabled{background:#f3f5f8}.tile strong{font-size:14px}.tile small{font-size:12px;color:#73839a}.flag{font-size:10px;font-weight:800;color:#2469cf}.tile:disabled .flag{color:#8e9aae}
+.work{margin-top:28px;background:white;border:1px solid #e1e7f0;border-radius:15px;overflow:hidden;box-shadow:0 4px 22px #193e7410}.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid #e6ebf3;padding:17px 22px}.progress{display:flex;align-items:center;gap:10px;font-size:12px;color:#8090a5}.step{display:flex;align-items:center;gap:7px}.step b{background:#e7f0ff;color:#2b6cc9;width:24px;height:24px;border-radius:50%;display:grid;place-items:center}.step.active b{background:#266be0;color:white}.bar select{padding:7px;border:1px solid #d9e1ee;border-radius:8px;background:white}
+.inner{max-width:760px;margin:auto;padding:27px}.inner h3{font-size:23px;letter-spacing:-.04em;margin:0 0 6px}.help{font-size:13px;color:#77869c;margin:0 0 25px}label.field{display:block;font-weight:750;font-size:13px;margin:17px 0 8px}textarea{width:100%;border:1px solid #d7e1ec;border-radius:9px;min-height:105px;padding:13px;resize:vertical;color:#263a54}#goal{min-height:138px}#draft{min-height:220px}.hint{font-size:12px;color:#8291a5;margin:8px 0}.buttons{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:23px;flex-wrap:wrap}.primary{background:#266ae0;border:1px solid #266ae0;color:white;border-radius:9px;padding:11px 17px;font-weight:800}.secondary{border:1px solid #d9e3ef;border-radius:8px;background:white;color:#334b6b;padding:8px 11px;font-size:12px;font-weight:750}.secondary:hover{background:#f0f5fc}.examples{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.error{color:#bb3342;font-size:12px;display:none}
+.summary{background:#eff6ff;border:1px solid #e1ecff;border-radius:9px;padding:14px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;margin:14px 0;color:#4c6180}.resultactions{display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap;margin-bottom:13px}
+.prompt{border:1px solid #dfe7f1;border-radius:10px;margin-bottom:10px}.prompthead{display:flex;align-items:center;gap:10px;padding:14px;flex-wrap:wrap}.bubble{flex:none;background:#eaf2ff;color:#266ac8;width:27px;height:27px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800}.meta{flex:1;min-width:120px}.meta strong{font-size:13px}.meta div{font-size:12px;color:#7e90a7}.actions{display:flex;gap:6px}.actions button{padding:7px 9px}.detail{padding:14px;border-top:1px solid #e9eef5;background:#fbfcfe}.detail pre{background:#f0f4f9;border-radius:8px;margin:0;padding:13px;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.65 ui-monospace,monospace;max-height:370px;overflow:auto}.detail textarea{font:12px/1.65 ui-monospace,monospace;min-height:230px}
+footer{text-align:center;font-size:11px;color:#98a5b6;padding:25px}
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:26px 14px}.inner{padding:17px}.bar{padding:16px}}
+@media(max-width:420px){.tile{padding:11px;min-height:137px}.tile.active{padding:10px}.tile strong{font-size:12px}.tile small{font-size:11px}.buttons .primary{width:100%}.actions{margin-left:37px}}
+</style></head><body>
+<header><div class="top"><span class="brand">prompts.yifan.men</span><button class="secondary" id="switch">EN / 中文</button></div></header>
+<main><section class="hero"><div class="eyebrow" data-k="eyebrow">GUIDED PROMPT WORKFLOWS</div><h1 data-k="headline">A better starting point for every task.</h1><p data-k="lead">Choose a workflow, describe your task, and get reusable prompts without calling AI.</p></section>
+<h2 data-k="choose">What would you like to do?</h2><section class="grid" aria-label="Workflow selection">
+<button class="tile active" data-mode="feature" aria-pressed="true"><span class="flag" data-k="ready">AVAILABLE</span><strong data-k="feature">Implement a Feature</strong><small data-k="featureDesc">Five prompts for building, testing and reviewing.</small></button>
+<button class="tile" data-mode="refine" aria-pressed="false"><span class="flag" data-k="ready">AVAILABLE</span><strong data-k="refine">Refine My Prompt</strong><small data-k="refineDesc">Wrap your draft and append a review-first instruction.</small></button>
+<button class="tile" disabled><span class="flag" data-k="soon">COMING SOON</span><strong data-k="learn">Learn a Concept</strong><small data-k="learnDesc">Learn a new topic step by step.</small></button>
+<button class="tile" disabled><span class="flag" data-k="soon">COMING SOON</span><strong data-k="reply">Professional Reply</strong><small data-k="replyDesc">Express your thoughts clearly.</small></button>
+<button class="tile" disabled><span class="flag" data-k="soon">COMING SOON</span><strong data-k="review">Code Review</strong><small data-k="reviewDesc">Systematically review code.</small></button>
+<button class="tile" disabled><span class="flag" data-k="soon">COMING SOON</span><strong data-k="inspire">Explore Ideas</strong><small data-k="inspireDesc">Get unstuck and find direction.</small></button>
+</section>
+<section class="work"><div class="bar"><div class="progress"><span class="step active" id="step1"><b>1</b><span data-k="describe">Describe</span></span>—<span class="step" id="step2"><b>2</b><span data-k="use">Use result</span></span></div><label style="font-size:12px;color:#7b8aa0" for="output"><span data-k="output">Output language</span> <select id="output"><option value="en">English</option><option value="zh">中文</option></select></label></div>
+<div class="inner"><section id="input"><h3 id="formtitle"></h3><p class="help" id="formdesc"></p>
+<div id="featureFields"><label class="field" for="goal" data-k="goalLabel">What do you want to build? *</label><textarea id="goal" maxlength="1500"></textarea><label class="field" for="context" data-k="contextLabel">Anything else we should consider? (optional)</label><textarea id="context" maxlength="1500"></textarea><div class="hint" data-k="contextHelp">Tech stack, constraints or other details. You can leave this blank.</div><div class="examples"><button class="secondary" id="example" data-k="example">Try an example</button></div></div>
+<div id="refineFields" hidden><label class="field" for="draft" data-k="draftLabel">Paste your existing prompt *</label><textarea id="draft" maxlength="12000"></textarea><p class="hint" data-k="draftHelp">Preserve the original text in a code block and append your exact instruction. No AI rewriting.</p></div>
+<div class="error" id="error" role="alert"></div><div class="buttons"><span class="hint" data-k="privacy">No AI calls · No login · No saved data</span><button class="primary" id="generate">Generate →</button></div></section>
+<section id="result" hidden><h3 id="resulttitle"></h3><p class="help" data-k="resultHelp">Preview, edit, then copy your prompts.</p><div class="summary" id="summary"></div><div class="resultactions"><button class="secondary" id="back" data-k="back">← Edit input</button><button class="secondary" id="copyall" data-k="copyall">Copy all</button></div><div id="list"></div><p class="hint" data-k="static">These are static templates, not AI-generated responses.</p></section>
+</div></section><footer data-k="footer">Interactive design mock v0.2 · No changes to production functionality</footer></main>
+<script>
+(function(){"use strict";
+const $=s=>document.getElementById(s);
+let ui="en",mode="feature",prompts=[];
+const suffix="First, review my full message and any attached files, even if my thoughts are rough, fragmented, or unfiltered. Tell me what you think I'm actually trying to achieve, then propose a plan for me to review. Stop and wait for my approval before starting the task.";
+const t={
+en:{eyebrow:"GUIDED PROMPT WORKFLOWS",headline:"A better starting point for every task.",lead:"Choose a workflow, describe your task, and get reusable prompts without calling AI.",choose:"What would you like to do?",ready:"AVAILABLE",soon:"COMING SOON",feature:"Implement a Feature",featureDesc:"Five prompts for building, testing and reviewing.",refine:"Refine My Prompt",refineDesc:"Wrap your draft and append a review-first instruction.",learn:"Learn a Concept",learnDesc:"Learn a new topic step by step.",reply:"Professional Reply",replyDesc:"Express your thoughts clearly.",review:"Code Review",reviewDesc:"Systematically review code.",inspire:"Explore Ideas",inspireDesc:"Get unstuck and find direction.",describe:"Describe",use:"Use result",output:"Output language",goalLabel:"What do you want to build? *",contextLabel:"Anything else we should consider? (optional)",contextHelp:"Tech stack, constraints or other details. You can leave this blank.",example:"Try an example",draftLabel:"Paste your existing prompt *",draftHelp:"Preserve the original text in a code block and append your exact instruction. No AI rewriting.",privacy:"No AI calls · No login · No saved data",resultHelp:"Preview, edit, then copy your prompts.",back:"← Edit input",copyall:"Copy all",static:"These are static templates, not AI-generated responses.",footer:"Interactive design mock v0.2 · No changes to production functionality",featureHelp:"Just one goal is enough. Context is optional.",refineHelp:"Paste rough notes, fragmented thoughts, or an existing prompt.",featureResult:"Your prompt set is ready",refineResult:"Your wrapped prompt is ready",featureButton:"Generate five prompts →",refineButton:"Wrap my prompt →",goalPlaceholder:"e.g. Add Google Login to my website",contextPlaceholder:"e.g. Preserve current UI; avoid new dependencies",draftPlaceholder:"Paste a prompt or your rough notes...",error:"Please enter something first.",copy:"Copy",copied:"Copied!",view:"View",hide:"Hide",edit:"Edit",done:"Done",goal:"Goal",extra:"Context",none:"Not provided",wrapped:"Wrapped Prompt"},
+zh:{eyebrow:"结构化 PROMPT 工作流",headline:"每个任务，都有更好的起点。",lead:"选择工作流，简单描述任务，无需 AI 调用即可获得可复用的 Prompt。",choose:"你想做什么？",ready:"可使用",soon:"即将推出",feature:"实现一个功能",featureDesc:"开发、测试、审查所需的五个 Prompt。",refine:"优化我的 Prompt",refineDesc:"原样包装输入，并添加先审阅后执行的指令。",learn:"学习一个概念",learnDesc:"循序渐进地学习新知识。",reply:"专业地回复",replyDesc:"更清晰地表达你的想法。",review:"代码审查",reviewDesc:"系统化检查代码。",inspire:"启发思路",inspireDesc:"寻找灵感和方向。",describe:"描述",use:"使用结果",output:"输出语言",goalLabel:"你想实现什么功能？ *",contextLabel:"还有什么需要考虑？（选填）",contextHelp:"技术栈、限制等信息都可填写，也可以留空。",example:"试用示例",draftLabel:"粘贴已有 Prompt *",draftHelp:"原文完整放入代码块，并逐字追加指定英文指令；不调用 AI 改写。",privacy:"无 AI 调用 · 不需登录 · 不保存输入",resultHelp:"预览、编辑并复制 Prompt。",back:"← 修改输入",copyall:"复制全部",static:"这些结果来自静态模板，不是 AI 生成的。",footer:"交互式设计原型 v0.2 · 不改变正式产品",featureHelp:"一句话即可开始，背景信息完全可选。",refineHelp:"粘贴已有 Prompt、碎片化想法或初稿。",featureResult:"Prompt Set 已生成",refineResult:"包装后的 Prompt 已生成",featureButton:"生成五个 Prompt →",refineButton:"包装我的 Prompt →",goalPlaceholder:"例如：为网站增加 Google 登录",contextPlaceholder:"例如：保持现有 UI，尽量减少新依赖",draftPlaceholder:"粘贴现有 Prompt 或草稿……",error:"请先输入一些内容。",copy:"复制",copied:"已复制",view:"查看",hide:"收起",edit:"编辑",done:"完成",goal:"目标",extra:"背景",none:"未提供",wrapped:"包装后的 Prompt"}
+};
+const names={en:["Clarify Requirements","Plan Implementation","Implement Feature","Test & Verify","Review Code"],zh:["澄清需求","制定实现计划","实现功能","测试与验证","代码审查"]};
+function wrap(input){const tick=String.fromCharCode(96),runs=input.match(new RegExp(tick+"+","g"))||[];const n=Math.max(3,...runs.map(s=>s.length+1)),f=tick.repeat(n);return f+"\n"+input+"\n"+f+"\n\n"+suffix;}
+function make(i,goal,context,lang){const info=(lang==="en"?"Feature goal:\n":"功能目标：\n")+goal+(context?"\n"+(lang==="en"?"Additional context:\n":"额外背景：\n")+context:"");const en=["Clarify only critical unanswered requirements. Distinguish facts from assumptions. Do not invent requirements.","Create a minimal, practical implementation plan. Ask for necessary codebase details rather than assuming them.","Implement in small reviewable changes. Inspect existing code first or request it; respect explicit constraints.","Provide a testing checklist covering main behavior, edge cases, failure cases and regressions.","Request the code or diff before reviewing. Identify actual correctness, security and maintainability problems by severity."];const zh=["只澄清重要的未决需求，区分已知事实和假设，不编造要求。","制定简洁可执行的实施计划；如需代码库资料，请先询问。","以便于审查的小步实现，先检查或索取代码，遵守明确约束。","列出主要流程、失败情况、边界情况及回归测试清单。","先索取实际代码或 Diff，再按严重程度指出正确性、安全性及可维护性问题。"];return (lang==="en"?"You are a senior software engineer.\n\n":"你是一名资深软件工程师。\n\n")+info+"\n\n"+(lang==="en"?en:zh)[i];}
+function elem(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e;}
+function localize(){document.documentElement.lang=ui==="zh"?"zh-CN":"en";document.querySelectorAll("[data-k]").forEach(e=>e.textContent=t[ui][e.dataset.k]);$("formtitle").textContent=t[ui][mode];$("formdesc").textContent=t[ui][mode+"Help"];$("generate").textContent=t[ui][mode+"Button"];$("goal").placeholder=t[ui].goalPlaceholder;$("context").placeholder=t[ui].contextPlaceholder;$("draft").placeholder=t[ui].draftPlaceholder;if(!$("result").hidden)render();}
+function select(modeNext){mode=modeNext;$("input").hidden=false;$("result").hidden=true;$("featureFields").hidden=mode!=="feature";$("refineFields").hidden=mode!=="refine";$("error").style.display="none";$("step1").classList.add("active");$("step2").classList.remove("active");document.querySelectorAll("[data-mode]").forEach(e=>{const yes=e.dataset.mode===mode;e.classList.toggle("active",yes);e.setAttribute("aria-pressed",String(yes));});localize();}
+function copyText(text,b){if(!navigator.clipboard?.writeText){alert("Clipboard unavailable; please copy manually.");return;}const original=b.textContent;navigator.clipboard.writeText(text).then(()=>{b.textContent=t[ui].copied;setTimeout(()=>b.textContent=original,1400);}).catch(()=>alert("Copy failed; please copy manually."));}
+function render(){const w=t[ui],lang=$("output").value;$("resulttitle").textContent=w[mode+"Result"];$("summary").textContent=mode==="feature"?w.goal+": "+$("goal").value.trim()+"\n"+w.extra+": "+($("context").value.trim()||w.none):w.wrapped+": "+$("draft").value.length+" characters";const list=$("list");list.replaceChildren();prompts.forEach((value,i)=>{const card=elem("article","prompt"),head=elem("div","prompthead");head.append(elem("span","bubble",String(i+1)));const meta=elem("div","meta");meta.append(elem("strong","",mode==="feature"?names[lang][i]:w.wrapped),elem("div","",mode==="feature"?names[lang][i]:w.refineHelp));head.append(meta);
+const acts=elem("div","actions"),show=elem("button","secondary",w.view),edit=elem("button","secondary",w.edit),cp=elem("button","secondary",w.copy);[show,edit,cp].forEach(b=>b.type="button");acts.append(show,edit,cp);head.append(acts);card.append(head);
+const detail=elem("div","detail"),pre=elem("pre","",value),area=elem("textarea");detail.hidden=true;area.value=value;area.hidden=true;area.setAttribute("aria-label",mode==="feature"?names[lang][i]:w.wrapped);detail.append(pre,area);card.append(detail);
+show.addEventListener("click",()=>{detail.hidden=!detail.hidden;show.textContent=detail.hidden?w.view:w.hide;});edit.addEventListener("click",()=>{detail.hidden=false;show.textContent=w.hide;const start=area.hidden;area.hidden=!start;pre.hidden=start;edit.textContent=start?w.done:w.edit;if(start)area.focus();});area.addEventListener("input",()=>{prompts[i]=area.value;pre.textContent=area.value;});cp.addEventListener("click",()=>copyText(prompts[i],cp));list.append(card);});}
+function generate(){const input=mode==="feature"?$("goal").value:$("draft").value;if(!input.trim()){$("error").textContent=t[ui].error;$("error").style.display="block";(mode==="feature"?$("goal"):$("draft")).focus();return;}$("error").style.display="none";const lang=$("output").value;prompts=mode==="feature"?Array.from({length:5},(_,i)=>make(i,$("goal").value.trim(),$("context").value.trim(),lang)):[wrap($("draft").value)];$("input").hidden=true;$("result").hidden=false;$("step1").classList.remove("active");$("step2").classList.add("active");render();}
+document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>select(b.dataset.mode)));
+$("switch").addEventListener("click",()=>{ui=ui==="en"?"zh":"en";localize();});
+$("generate").addEventListener("click",generate);
+$("back").addEventListener("click",()=>{$("input").hidden=false;$("result").hidden=true;$("step1").classList.add("active");$("step2").classList.remove("active");});
+$("copyall").addEventListener("click",()=>copyText(prompts.length===1?prompts[0]:prompts.map((p,i)=>(i+1)+". "+names[$("output").value][i]+"\n\n"+p).join("\n\n-----\n\n"),$("copyall")));
+$("output").addEventListener("change",()=>{if(!$("result").hidden)generate();});
+$("example").addEventListener("click",()=>{$("goal").value=ui==="en"?"Add Google Login to my website":"给网站增加 Google 登录";$("context").value=ui==="en"?"Keep the existing UI and avoid extra dependencies.":"保持现有 UI，避免额外依赖。";});
+select("feature");
+})();
+</script></body></html>
